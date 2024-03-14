@@ -12,5 +12,5 @@ Application dependencies list:
 "uuid": "^9.0.1"
 },
 
-Link to github: 
+Link to github: https://github.com/UlugbekKuronbekov/wt_coursework
 Link to project live site: 
