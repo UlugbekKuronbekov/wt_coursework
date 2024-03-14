@@ -13,4 +13,4 @@ Application dependencies list:
 },
 
 Link to github: https://github.com/UlugbekKuronbekov/wt_coursework
-Link to project live site: 
+Link to project live site: https://wt-coursework-846p.onrender.com/
