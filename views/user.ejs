@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>Event</h1>
+<h2>This web application was created to fulfill Web Technology module’s requirements and does not represent an actual company or service</h2>
+<form style="margin-bottom: 20px">
+    <label for="date">Date:</label><br>
+    <input type="date" id="date" name="date"><br><br>
+    <label for="location">Location:</label><br>
+    <input type="text" id="location" name="location"><br><br>
+    <labe>Description</labe>
+    <br>
+    <input type="text" id="description" name="description">
+    <button class="create_event">create</button>
+</form>
+
+<table>
+    <tbody>
+    <tr>
+        <th>Id</th>
+        <th>Date</th>
+        <th>Location</th>
+        <th>Description</th>
+        <th>Action</th>
+    </tr>
+    </tbody>
+</table>
+</body>
+
+<script>
+    class Modifier {
+        constructor() {
+            this.events = null;
+        }
+
+        async getUsers() {
+            const response = await fetch("/events/data")
+            this.user = await response.json();
+        }
+
+        async makeUsers() {
+            const tbody = document.querySelector("tbody");
+
+            this.user.forEach((event) => {
+                tbody.innerHTML += `<tr>
+        <td>${event.id}</td>
+        <td>${event.date}</td>
+        <td>${event.location}</td>
+        <td>${event.description}</td>
+        <td>
+            <button class="update" id="${event.id}">update</button>
+            <button class="delete" id="${event.id}">delete</button>
+        </td>
+    </tr>`
+            })
+
+            const button = document.querySelector(".create_event");
+            const inputs = document.querySelectorAll("input");
+
+            const inputsObj = {
+                id: 0,
+                date: null,
+                location: null,
+                description: null
+            };
+
+            inputs.forEach((input) => {
+
+                input.addEventListener("change", (e) => {
+
+                    inputsObj[e.target.name] = e.target.value;
+                })
+            })
+
+
+            button.addEventListener("click", (e) => {
+                e.preventDefault()
+
+                if (inputsObj.date == null || inputsObj.location == null || inputsObj.description == null) {
+                    alert("every field should be filled")
+                    return
+                }
+
+                window.location.reload()
+
+                fetch("/events/create", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(inputsObj)
+                })
+            })
+
+            const deleteBtns = document.querySelectorAll(".delete");
+
+            deleteBtns.forEach((deleteBtn) => {
+                deleteBtn.addEventListener("click", (e) => {
+                    window.location.reload()
+                    fetch(`/events/${e.target.id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                    }).then((res) => {
+                        console.log(res)
+                    })
+                })
+            })
+
+            const updateBtns = document.querySelectorAll(".update");
+            const url = window.location.href;
+
+            updateBtns.forEach((updateBtn) => {
+                updateBtn.addEventListener("click", (e) => {
+                    e.preventDefault()
+                    const newUrl = url + `update/${e.target.id}`
+
+                    window.location.href = newUrl;
+                })
+            })
+        }
+    }
+
+    const renderer = new Modifier();
+
+    Promise.resolve()
+        .then(() => renderer.getUsers())
+        .then(() => renderer.makeUsers())
+
+</script>
+
+</html>
